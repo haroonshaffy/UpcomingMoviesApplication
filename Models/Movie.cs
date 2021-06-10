@@ -26,4 +26,15 @@ namespace UpcomingMoviesApplication.Models
         // A movie can have multiple actors
         public ICollection<Actor> Actors { get; set; }
     }
+
+    public class MovieDto
+    {
+        public int MovieID { get; set; }
+        public string MovieTitle { get; set; }
+        public string MovieDescription { get; set; }
+        public DateTime MovieReleaseDate { get; set; }
+
+        //Movie Duration in minutes
+        public int MovieDuration { get; set; }
+    }
 }
