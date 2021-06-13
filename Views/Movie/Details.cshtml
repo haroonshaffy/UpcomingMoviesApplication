@@ -1,0 +1,13 @@
+﻿@model UpcomingMoviesApplication.Models.Movie
+
+
+@{
+    ViewBag.Title = "Show";
+}
+
+<a href="/Movie/List">Go back to List</a>
+<h2>@Model.MovieTitle</h2>
+<div>Description: @Model.MovieDescription</div>
+<div>Release Date: @Model.MovieReleaseDate</div>
+<div>Duration: @Model.MovieDuration minutes</div>
+

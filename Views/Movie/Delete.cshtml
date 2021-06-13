@@ -1,0 +1,12 @@
+﻿@model UpcomingMoviesApplication.Models.Movie
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Are you sure you want to delete @Model.MovieTitle?</h2>
+<a href="/Movie/List">Cancel</a>
+<form action="/Movie/Delete/@Model.MovieID" method="post">
+    <input type="submit" value="Confirm Delete" />
+</form>
+

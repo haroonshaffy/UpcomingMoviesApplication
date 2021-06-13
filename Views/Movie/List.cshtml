@@ -1,0 +1,14 @@
+﻿@model IEnumerable<UpcomingMoviesApplication.Models.Movie>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+@foreach(var movie in Model)
+            {
+                <h2><a href="/Movie/Details/@movie.MovieID">@movie.MovieTitle</a></h2>
+                <div>Description: @movie.MovieDescription</div>
+                <div>Release Date: @movie.MovieReleaseDate</div>
+                <div>Duration: @movie.MovieDuration minutes</div>
+            }
+

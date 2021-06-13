@@ -1,0 +1,36 @@
+﻿@model UpcomingMoviesApplication.Models.Movie
+
+@{
+    ViewBag.Title = "Update Movie";
+}
+
+<a href="/Movie/List">Go back to the List</a>
+
+<h2>Update Movie</h2>
+
+<h3>Updating the details for @Model.MovieTitle</h3>
+
+<form action="/Movie/Edit/@Model.MovieID" method="post">
+    <input type="number" style="display:none" name="MovieID" value="@Model.MovieID"/>
+
+    <div>
+        <label>Movie Title:</label>
+        <input type="text" name="MovieTitle" value="@Model.MovieTitle"/>
+    </div>
+    <div>
+        <label>Movie Description:</label>
+        <input type="text" name="MovieDescription" value="@Model.MovieDescription"/>
+    </div>
+    <div>
+        <label>Movie Release Date:</label>
+        <input type="date" name="MovieReleaseDate" value="@Model.MovieReleaseDate.ToString("yyyy-MM-dd")"/>
+    </div>
+    <div>
+        <label>Movie Duration (In minutes):</label>
+        <input type="number" name="MovieDuration" value="@Model.MovieDuration"/>
+    </div>
+    <div>
+        <input type="submit" value="Update Movie details" />
+    </div>
+</form>
+
