@@ -1,0 +1,12 @@
+﻿@model UpcomingMoviesApplication.Models.Genre
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Are you sure you want to delete @Model.GenreName?</h2>
+<a href="/Genre/List">Cancel</a>
+<form action="/Genre/Delete/@Model.GenreID" method="post">
+    <input type="submit" value="Confirm Delete" />
+</form>
+

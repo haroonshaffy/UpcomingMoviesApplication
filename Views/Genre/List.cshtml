@@ -1,0 +1,10 @@
+﻿@model IEnumerable<UpcomingMoviesApplication.Models.Genre>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>Genres</h2>
+@foreach (var genre in Model)
+{
+    <h2><a href="/Genre/Details/@genre.GenreID">@genre.GenreName</a></h2>
+}
