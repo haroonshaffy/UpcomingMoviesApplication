@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>Create Actor</h2>
+<form action="/Actor/Create" method="post">
+    <div>
+        <label>Actor Name:</label>
+        <input type="text" name="ActorName" />
+    </div>
+    <div>
+        <label>Actor Age (In years):</label>
+        <input type="number" name="ActorAge" />
+    </div>
+    <div>
+        <label>Actor Gender:</label>
+        <input type="text" name="ActorGender" />
+    </div>
+    <div>
+        <input type="submit" value="Add Actor" />
+    </div>
+</form>
+

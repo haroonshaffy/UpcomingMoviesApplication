@@ -1,0 +1,13 @@
+﻿@model IEnumerable<UpcomingMoviesApplication.Models.Actor>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+@foreach (var actor in Model)
+{
+    <h2><a href="/Actor/Details/@actor.ActorID">@actor.ActorName</a></h2>
+    <div>Age (In years): @actor.ActorAge years</div>
+    <div>Gender: @actor.ActorGender</div>
+}
+

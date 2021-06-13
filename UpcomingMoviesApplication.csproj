@@ -181,6 +181,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ActorController.cs" />
     <Compile Include="Controllers\ActorDataController.cs" />
     <Compile Include="Controllers\GenreController.cs" />
     <Compile Include="Controllers\GenreDataController.cs" />
@@ -300,6 +301,12 @@
     <Content Include="Views\Genre\Error.cshtml" />
     <Content Include="Views\Genre\Update.cshtml" />
     <Content Include="Views\Genre\Delete.cshtml" />
+    <Content Include="Views\Actor\List.cshtml" />
+    <Content Include="Views\Actor\Details.cshtml" />
+    <Content Include="Views\Actor\Error.cshtml" />
+    <Content Include="Views\Actor\New.cshtml" />
+    <Content Include="Views\Actor\Update.cshtml" />
+    <Content Include="Views\Actor\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,32 @@
+﻿@model UpcomingMoviesApplication.Models.Actor
+
+@{
+    ViewBag.Title = "Update Actor";
+}
+
+<a href="/Actor/List">Go back to the List</a>
+
+<h2>Update Actor</h2>
+
+<h3>Updating the details for @Model.ActorName</h3>
+
+<form action="/Actor/Edit/@Model.ActorID" method="post">
+    <input type="number" style="display:none" name="ActorID" value="@Model.ActorID" />
+
+    <div>
+        <label>Actor Name:</label>
+        <input type="text" name="ActorName" value="@Model.ActorName" />
+    </div>
+    <div>
+        <label>Actor Age (In years):</label>
+        <input type="number" name="ActorAge" value="@Model.ActorAge" />
+    </div>
+    <div>
+        <label>Actor Gender:</label>
+        <input type="text" name="ActorGender" value="@Model.ActorGender" />
+    </div>
+    <div>
+        <input type="submit" value="Update Actor details" />
+    </div>
+</form>
+
