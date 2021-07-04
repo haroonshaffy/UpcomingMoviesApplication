@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Net.Http;
 using System.Diagnostics;
 using UpcomingMoviesApplication.Models;
+using UpcomingMoviesApplication.Models.ViewModels;
 using System.Web.Script.Serialization;
 
 namespace UpcomingMoviesApplication.Controllers
@@ -18,7 +19,7 @@ namespace UpcomingMoviesApplication.Controllers
         static ActorController()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44343/api/actordata/");
+            client.BaseAddress = new Uri("https://localhost:44343/api/");
         }
 
 
@@ -28,26 +29,38 @@ namespace UpcomingMoviesApplication.Controllers
             //Objective: To communicate with the Actor data API to retrieve the list of Actors
             //curl https://localhost:44343/api/actordata/listactors
 
-            string url = "listactors";
+            string url = "actordata/listactors";
             HttpResponseMessage response = client.GetAsync(url).Result;
 
-            IEnumerable<Actor> actor = response.Content.ReadAsAsync<IEnumerable<Actor>>().Result;
+            IEnumerable<ActorDto> actors = response.Content.ReadAsAsync<IEnumerable<ActorDto>>().Result;
 
-            return View(actor);
+            return View(actors);
         }
 
         // GET: Actor/Details/5
         public ActionResult Details(int id)
         {
+            DetailsActor ViewModel = new DetailsActor(); 
+
             //Objective: To communicate with the Actor data API to retrieve one actor
             //curl https://localhost:44343/api/actordata/findactor/{id}
 
-            string url = "findactor/" + id;
+            string url = "actordata/findactor/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
 
-            Actor selectedactor = response.Content.ReadAsAsync<Actor>().Result;
+            ActorDto SelectedActor = response.Content.ReadAsAsync<ActorDto>().Result;
 
-            return View(selectedactor);
+            ViewModel.SelectedActor = SelectedActor;
+
+            //Show all movies in which this actor has starred
+            url = "moviedata/listmoviesforactor/" + id;
+            response = client.GetAsync(url).Result;
+
+            IEnumerable<MovieDto> MoviesForActor = response.Content.ReadAsAsync<IEnumerable<MovieDto>>().Result;
+
+            ViewModel.MoviesForActor = MoviesForActor;
+
+            return View(ViewModel);
         }
 
         public ActionResult Error()
@@ -70,7 +83,7 @@ namespace UpcomingMoviesApplication.Controllers
 
             string jsonpayload = jss.Serialize(actor);
 
-            string url = "addactor";
+            string url = "actordata/addactor";
 
             HttpContent content = new StringContent(jsonpayload);
             content.Headers.ContentType.MediaType = "application/json";
@@ -92,11 +105,11 @@ namespace UpcomingMoviesApplication.Controllers
         {
             //Find the actor to show to the user to understand what is being edited
 
-            string url = "findactor/" + id;
+            string url = "actordata/findactor/" + id;
 
             HttpResponseMessage response = client.GetAsync(url).Result;
 
-            Actor selectedactor = response.Content.ReadAsAsync<Actor>().Result;
+            ActorDto selectedactor = response.Content.ReadAsAsync<ActorDto>().Result;
 
             return View(selectedactor);
         }
@@ -107,7 +120,7 @@ namespace UpcomingMoviesApplication.Controllers
         {
             //Objective : Add a new actor into our system using the API
             //curl -H "Content-type:application/json" -d @actor.json https://localhost:44343/api/actordata/addactor
-            string url = "updateactor/" + id;
+            string url = "actordata/updateactor/" + id;
 
             string jsonpayload = jss.Serialize(actor);
 
@@ -129,11 +142,11 @@ namespace UpcomingMoviesApplication.Controllers
         // GET: Actor/Delete/5
         public ActionResult Delete(int id)
         {
-            string url = "findactor/" + id;
+            string url = "actordata/findactor/" + id;
 
             HttpResponseMessage response = client.GetAsync(url).Result;
 
-            Actor selectedactor = response.Content.ReadAsAsync<Actor>().Result;
+            ActorDto selectedactor = response.Content.ReadAsAsync<ActorDto>().Result;
 
             return View(selectedactor);
         }
@@ -142,7 +155,7 @@ namespace UpcomingMoviesApplication.Controllers
         [HttpPost]
         public ActionResult Delete(int id, Actor actor)
         {
-            string url = "deleteactor/" + id;
+            string url = "actordata/deleteactor/" + id;
 
             string jsonpayload = jss.Serialize(actor);
 

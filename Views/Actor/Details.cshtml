@@ -1,4 +1,4 @@
-﻿@model UpcomingMoviesApplication.Models.Actor
+﻿@model UpcomingMoviesApplication.Models.ViewModels.DetailsActor
 
 
 @{
@@ -6,7 +6,19 @@
 }
 
 <a href="/Actor/List">Go back to List</a>
-<h2>@Model.ActorName</h2>
-<div>Age (In years): @Model.ActorAge</div>
-<div>Gender: @Model.ActorGender</div>
+<a href="/Actor/Update/@Model.SelectedActor.ActorID">Update</a>
+<a href="/Actor/Delete/@Model.SelectedActor.ActorID">Delete</a>
+
+
+<h2>@Model.SelectedActor.ActorName</h2>
+<div>Age (In years): @Model.SelectedActor.ActorAge</div>
+<div>Gender: @Model.SelectedActor.ActorGender</div>
+
+<div>
+    <h3>Movies acted in:</h3>
+    @foreach(var movie in Model.MoviesForActor)
+            {
+                <a href="/Movie/Details/@movie.MovieID">@movie.MovieTitle</a><br />
+            }
+</div>
 

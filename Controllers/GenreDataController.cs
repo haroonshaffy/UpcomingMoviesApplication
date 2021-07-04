@@ -16,11 +16,80 @@ namespace UpcomingMoviesApplication.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: api/GenreData/ListGenre
+        // GET: api/GenreData/ListGenres
         [HttpGet]
-        public IQueryable<Genre> ListGenre()
+        public IEnumerable<GenreDto> ListGenres()
         {
-            return db.Genre;
+            List<Genre> Genres = db.Genres.ToList();
+            List<GenreDto> GenreDtos = new List<GenreDto>();
+
+            Genres.ForEach(c => GenreDtos.Add(new GenreDto()
+            {
+                GenreID = c.GenreID,
+                GenreName = c.GenreName
+            }));
+
+            return GenreDtos;
+        }
+
+        /// <summary>
+        /// Gathers information about genres related to a particular movie
+        /// </summary>
+        /// <returns>
+        /// HEADER: 200 (OK)
+        /// CONTENT: All Genres in the database, associated with a particular movie
+        /// </returns>
+        /// <param name="id">Movie Primary Key</param>
+        /// <example>
+        /// GET: api/MovieData/ListGenresForMovie/1
+        /// </example>
+
+        [HttpGet]
+        [ResponseType(typeof(MovieDto))]
+
+        public IHttpActionResult ListGenresForMovie(int id)
+        {
+            //All movies that have genres which match with our ID
+            List<Genre> Genres = db.Genres.Where(c => c.Movies.Any(a => a.MovieID == id)).ToList();
+            List<GenreDto> GenreDtos = new List<GenreDto>();
+
+            Genres.ForEach(c => GenreDtos.Add(new GenreDto()
+            {
+                GenreID = c.GenreID,
+                GenreName = c.GenreName
+            }));
+
+            return Ok(GenreDtos);
+        }
+
+        /// <summary>
+        /// Gathers information about genres not related to a particular movie
+        /// </summary>
+        /// <returns>
+        /// HEADER: 200 (OK)
+        /// CONTENT: All Genres in the database, not associated with a particular movie
+        /// </returns>
+        /// <param name="id">Movie Primary Key</param>
+        /// <example>
+        /// GET: api/GenreData/ListGenresNotForMovie/1
+        /// </example>
+
+        [HttpGet]
+        [ResponseType(typeof(GenreDto))]
+
+        public IHttpActionResult ListGenresNotForMovie(int id)
+        {
+            //All movies that have genres which match with our ID
+            List<Genre> Genres = db.Genres.Where(c => !c.Movies.Any(a => a.MovieID == id)).ToList();
+            List<GenreDto> GenreDtos = new List<GenreDto>();
+
+            Genres.ForEach(c => GenreDtos.Add(new GenreDto()
+            {
+                GenreID = c.GenreID,
+                GenreName = c.GenreName
+            }));
+
+            return Ok(GenreDtos);
         }
 
         // GET: api/GenreData/FindGenre/5
@@ -28,13 +97,19 @@ namespace UpcomingMoviesApplication.Controllers
         [HttpGet]
         public IHttpActionResult FindGenre(int id)
         {
-            Genre genre = db.Genre.Find(id);
+            Genre genre = db.Genres.Find(id);
+            GenreDto GenreDto = new GenreDto()
+            {
+                GenreID = genre.GenreID,
+                GenreName = genre.GenreName
+            };
+
             if (genre == null)
             {
                 return NotFound();
             }
 
-            return Ok(genre);
+            return Ok(GenreDto);
         }
 
         // POST: api/GenreData/UpdateGenre/5
@@ -83,7 +158,7 @@ namespace UpcomingMoviesApplication.Controllers
                 return BadRequest(ModelState);
             }
 
-            db.Genre.Add(genre);
+            db.Genres.Add(genre);
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = genre.GenreID }, genre);
@@ -94,13 +169,13 @@ namespace UpcomingMoviesApplication.Controllers
         [HttpPost]
         public IHttpActionResult DeleteGenre(int id)
         {
-            Genre genre = db.Genre.Find(id);
+            Genre genre = db.Genres.Find(id);
             if (genre == null)
             {
                 return NotFound();
             }
 
-            db.Genre.Remove(genre);
+            db.Genres.Remove(genre);
             db.SaveChanges();
 
             return Ok();
@@ -117,7 +192,7 @@ namespace UpcomingMoviesApplication.Controllers
 
         private bool GenreExists(int id)
         {
-            return db.Genre.Count(e => e.GenreID == id) > 0;
+            return db.Genres.Count(c => c.GenreID == id) > 0;
         }
     }
 }

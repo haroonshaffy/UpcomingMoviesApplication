@@ -18,10 +18,81 @@ namespace UpcomingMoviesApplication.Controllers
 
         // GET: api/ActorData/ListActors
         [HttpGet]
-        public IQueryable<Actor> ListActors()
+        public IEnumerable<ActorDto> ListActors()
         {
-            return db.Actors;
+            List<Actor> Actors = db.Actors.ToList();
+            List<ActorDto> ActorDtos = new List<ActorDto>();
+
+            Actors.ForEach(b => ActorDtos.Add(new ActorDto()
+            {
+                ActorID = b.ActorID,
+                ActorName = b.ActorName,
+                ActorAge = b.ActorAge,
+                ActorGender = b.ActorGender
+            }));
+
+            return ActorDtos;
         }
+
+        /// <summary>
+        /// Returns all Actors in the system
+        /// </summary>
+        /// <returns>
+        /// HEADER: 200 (OK)
+        /// CONTENT: All Actors in the database, for a particular movie
+        /// </returns>
+        /// <param name="id">Movie primary key</param>
+        /// <example>
+        /// GET: api/ActorData/ListActorsForMovie/5
+        /// </example>
+        
+        [HttpGet]
+        [ResponseType(typeof(ActorDto))]
+        public IHttpActionResult ListActorsForMovie(int id)
+        {
+            List<Actor> Actors = db.Actors.Where(b => b.Movies.Any(a => a.MovieID == id)).ToList();
+            List<ActorDto> ActorDtos = new List<ActorDto>();
+
+            Actors.ForEach(b => ActorDtos.Add(new ActorDto()
+            {
+                ActorID = b.ActorID,
+                ActorName = b.ActorName,
+                ActorAge = b.ActorAge,
+                ActorGender = b.ActorGender
+            }));
+            return Ok(ActorDtos);
+        }
+
+        /// <summary>
+        /// Returns all Actors in the system
+        /// </summary>
+        /// <returns>
+        /// HEADER: 200 (OK)
+        /// CONTENT: All Actors in the database not in that particular movie
+        /// </returns>
+        /// <param name="id">Movie primary key</param>
+        /// <example>
+        /// GET: api/ActorData/ListActorsNotInMovie/5
+        /// </example>
+
+        [HttpGet]
+        [ResponseType(typeof(ActorDto))]
+        public IHttpActionResult ListActorsNotInMovie(int id)
+        {
+            List<Actor> Actors = db.Actors.Where(b => !b.Movies.Any(a => a.MovieID == id)).ToList();
+            List<ActorDto> ActorDtos = new List<ActorDto>();
+
+            Actors.ForEach(b => ActorDtos.Add(new ActorDto()
+            {
+                ActorID = b.ActorID,
+                ActorName = b.ActorName,
+                ActorAge = b.ActorAge,
+                ActorGender = b.ActorGender
+            }));
+            return Ok(ActorDtos);
+        }
+
+
 
         // GET: api/ActorData/FindActor/5
         [ResponseType(typeof(Actor))]
@@ -29,12 +100,20 @@ namespace UpcomingMoviesApplication.Controllers
         public IHttpActionResult FindActor(int id)
         {
             Actor actor = db.Actors.Find(id);
+            ActorDto ActorDto = new ActorDto()
+            {
+                ActorID = actor.ActorID,
+                ActorName = actor.ActorName,
+                ActorAge = actor.ActorAge,
+                ActorGender = actor.ActorGender
+            };
+
             if (actor == null)
             {
                 return NotFound();
             }
 
-            return Ok(actor);
+            return Ok(ActorDto);
         }
 
         // POST: api/ActorData/UpdateActor/5

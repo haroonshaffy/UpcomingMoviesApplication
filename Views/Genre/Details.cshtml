@@ -1,9 +1,21 @@
-﻿@model UpcomingMoviesApplication.Models.Genre
+﻿@model UpcomingMoviesApplication.Models.ViewModels.DetailsGenre
 
 @{
     ViewBag.Title = "Details";
 }
 
 <a href="/Genre/List">Go back to the List</a>
-<h2>@Model.GenreName</h2>
+<a href="/Genre/Update/@Model.SelectedGenre.GenreID">Update</a>
+<a href="/Genre/Delete/@Model.SelectedGenre.GenreID">Delete</a>
+
+
+<h2>@Model.SelectedGenre.GenreName</h2>
+
+<div>
+    <h2>Movies in @Model.SelectedGenre.GenreName genre:</h2>
+    @foreach(var movie in Model.MoviesForGenre)
+            {
+                <a href="/Movie/Details/@movie.MovieID">@movie.MovieTitle</a><br />
+            }
+</div>
 

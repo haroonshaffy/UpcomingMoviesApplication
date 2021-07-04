@@ -1,9 +1,11 @@
-﻿@model IEnumerable<UpcomingMoviesApplication.Models.Genre>
+﻿@model IEnumerable<UpcomingMoviesApplication.Models.GenreDto>
 @{
     ViewBag.Title = "List";
 }
 
-<h2>Genres</h2>
+<h2>Genre List</h2>
+<a href="/Genre/New">Add a new genre</a>
+
 @foreach (var genre in Model)
 {
     <h2><a href="/Genre/Details/@genre.GenreID">@genre.GenreName</a></h2>

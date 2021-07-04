@@ -27,7 +27,11 @@ namespace UpcomingMoviesApplication.Models
 
         // Adding a Movie entity to our system
         public DbSet<Movie> Movies { get; set; }
-        public DbSet<Genre> Genre { get; set; }
+
+        // Adding a Genre entity to our system
+        public DbSet<Genre> Genres { get; set; }
+
+        // Adding an Actor entity to our system
         public DbSet<Actor> Actors { get; set; }
 
         public static ApplicationDbContext Create()

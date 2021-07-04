@@ -15,4 +15,10 @@ namespace UpcomingMoviesApplication.Models
         // A genre can have many movies
         public ICollection<Movie> Movies { get; set; }
     }
+
+    public class GenreDto
+    {
+        public int GenreID { get; set; }
+        public string GenreName { get; set; }
+    }
 }

@@ -1,9 +1,11 @@
-﻿@model IEnumerable<UpcomingMoviesApplication.Models.Movie>
+﻿@model IEnumerable<UpcomingMoviesApplication.Models.MovieDto>
 @{
     ViewBag.Title = "List";
 }
 
-<h2>List</h2>
+<h2>Movie List</h2>
+<a href="/Movie/New">Add a new movie</a>
+
 @foreach(var movie in Model)
             {
                 <h2><a href="/Movie/Details/@movie.MovieID">@movie.MovieTitle</a></h2>

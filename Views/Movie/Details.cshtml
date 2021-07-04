@@ -1,4 +1,4 @@
-﻿@model UpcomingMoviesApplication.Models.Movie
+﻿@model UpcomingMoviesApplication.Models.ViewModels.DetailsMovie
 
 
 @{
@@ -6,8 +6,54 @@
 }
 
 <a href="/Movie/List">Go back to List</a>
-<h2>@Model.MovieTitle</h2>
-<div>Description: @Model.MovieDescription</div>
-<div>Release Date: @Model.MovieReleaseDate</div>
-<div>Duration: @Model.MovieDuration minutes</div>
+<a href="/Movie/Update/@Model.SelectedMovie.MovieID">Update</a>
+<a href="/Movie/Delete/@Model.SelectedMovie.MovieID">Delete</a>
 
+
+<h2>@Model.SelectedMovie.MovieTitle</h2>
+<div>Description: @Model.SelectedMovie.MovieDescription</div>
+<div>Release Date: @Model.SelectedMovie.MovieReleaseDate</div>
+<div>Duration: @Model.SelectedMovie.MovieDuration minutes</div>
+
+<div>
+    <h2>Actors in the Movie:</h2>
+    @foreach(var actor in Model.ActorsForMovie)
+            {
+                <a href="/Actor/Details/@actor.ActorID">@actor.ActorName</a> <a style="color:#ff0000" href="/Movie/Unassociate/@Model.SelectedMovie.MovieID?ActorID=@actor.ActorID">[x]</a> <br />
+            }
+
+    <div>
+        <h3>Add actors to the cast of @Model.SelectedMovie.MovieTitle</h3>
+        <form method="POST" action="/Movie/Associate/@Model.SelectedMovie.MovieID">
+            <select name="ActorID">
+                @foreach (var actor in Model.ActorsNotInMovie)
+                {
+                    <option value="@actor.ActorID">@actor.ActorName</option>
+                }
+
+            </select>
+            <input type="submit" value="Add Actor to Cast" />
+        </form>
+    </div>
+</div>
+
+<div>
+    <h2>Movie Genres:</h2>
+    @foreach (var genre in Model.GenresForMovie)
+    {
+        <a href="/Genre/Details/@genre.GenreID">@genre.GenreName</a> <a style="color:#ff0000" href="/Movie/UnAssociateGenre/@Model.SelectedMovie.MovieID?GenreID=@genre.GenreID">[x]</a> <br />
+    }
+
+    <div>
+        <h3>Add a new genre to the movie @Model.SelectedMovie.MovieTitle:</h3>
+        <form method="POST" action="/Movie/AssociateGenre/@Model.SelectedMovie.MovieID">
+            <select name="GenreID">
+                @foreach (var genre in Model.GenresNotForMovie)
+                {
+                    <option value="@genre.GenreID">@genre.GenreName</option>
+                }
+            </select>
+            <input type="submit" value="Add Genre to Movie" />
+        </form>
+    </div>
+</div>
