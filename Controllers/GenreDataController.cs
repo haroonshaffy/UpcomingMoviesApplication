@@ -76,7 +76,6 @@ namespace UpcomingMoviesApplication.Controllers
 
         [HttpGet]
         [ResponseType(typeof(GenreDto))]
-
         public IHttpActionResult ListGenresNotForMovie(int id)
         {
             //All movies that have genres which match with our ID
@@ -115,6 +114,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/GenreData/UpdateGenre/5
         [ResponseType(typeof(void))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult UpdateGenre(int id, Genre genre)
         {
             if (!ModelState.IsValid)
@@ -151,6 +151,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/GenreData/AddGenre
         [ResponseType(typeof(Genre))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult AddGenre(Genre genre)
         {
             if (!ModelState.IsValid)
@@ -167,6 +168,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/GenreData/DeleteGenre/5
         [ResponseType(typeof(Genre))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult DeleteGenre(int id)
         {
             Genre genre = db.Genres.Find(id);

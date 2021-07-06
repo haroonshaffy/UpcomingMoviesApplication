@@ -119,6 +119,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/ActorData/UpdateActor/5
         [ResponseType(typeof(void))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult UpdateActor(int id, Actor actor)
         {
             if (!ModelState.IsValid)
@@ -155,6 +156,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/ActorData/AddActor
         [ResponseType(typeof(Actor))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult AddActor(Actor actor)
         {
             if (!ModelState.IsValid)
@@ -171,6 +173,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/ActorData/DeleteActor/5
         [ResponseType(typeof(Actor))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult DeleteActor(int id)
         {
             Actor actor = db.Actors.Find(id);

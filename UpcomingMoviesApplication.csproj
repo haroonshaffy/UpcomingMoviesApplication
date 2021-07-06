@@ -220,6 +220,14 @@
     <Compile Include="Migrations\202106100600534_datatype-correction.Designer.cs">
       <DependentUpon>202106100600534_datatype-correction.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202107041726556_imageUpload.cs" />
+    <Compile Include="Migrations\202107041726556_imageUpload.Designer.cs">
+      <DependentUpon>202107041726556_imageUpload.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202107041738291_imageUpload-correction.cs" />
+    <Compile Include="Migrations\202107041738291_imageUpload-correction.Designer.cs">
+      <DependentUpon>202107041738291_imageUpload-correction.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Actor.cs" />
@@ -313,6 +321,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Images\Movies\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -348,6 +357,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202106100600534_datatype-correction.resx">
       <DependentUpon>202106100600534_datatype-correction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107041726556_imageUpload.resx">
+      <DependentUpon>202107041726556_imageUpload.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107041738291_imageUpload-correction.resx">
+      <DependentUpon>202107041738291_imageUpload-correction.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

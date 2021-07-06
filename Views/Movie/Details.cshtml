@@ -11,11 +11,25 @@
 
 
 <h2>@Model.SelectedMovie.MovieTitle</h2>
-<div>Description: @Model.SelectedMovie.MovieDescription</div>
-<div>Release Date: @Model.SelectedMovie.MovieReleaseDate</div>
-<div>Duration: @Model.SelectedMovie.MovieDuration minutes</div>
 
-<div>
+<div class="col-md-6 col-sm-12">
+    @{
+        string imageurl = "/Content/Images/Movies/default.png";
+        if (Model.SelectedMovie.MovieHasPic)
+        {
+            imageurl = "/Content/Images/Movies/" + Model.SelectedMovie.MovieID + "." + Model.SelectedMovie.PicExtension;
+        }
+    }
+    <div><img style="display:block; max-width:100%;" alt="@Model.SelectedMovie.MovieTitle" src="@imageurl" /></div>
+</div>
+
+<div class="col-md-6 col-sm-12">
+    <div>Description: @Model.SelectedMovie.MovieDescription</div>
+    <div>Release Date: @Model.SelectedMovie.MovieReleaseDate</div>
+    <div>Duration: @Model.SelectedMovie.MovieDuration minutes</div>
+</div>
+
+<div class="col-md-6 col-sm-12">
     <h2>Actors in the Movie:</h2>
     @foreach(var actor in Model.ActorsForMovie)
             {
@@ -37,7 +51,7 @@
     </div>
 </div>
 
-<div>
+<div class="col-md-6 col-sm-12">
     <h2>Movie Genres:</h2>
     @foreach (var genre in Model.GenresForMovie)
     {

@@ -18,7 +18,13 @@ namespace UpcomingMoviesApplication.Models
         //Movie Duration in minutes
         public int MovieDuration { get; set; }
 
-        //TODO : Add movie poster image and youtube link to the trailer
+        //TODO : Add youtube link to the trailer
+
+
+        //data needed for keeping track of movie images uploaded
+        //images deposited into /Content/Images/Movies/{id}.{extension}
+        public bool MovieHasPic { get; set; }
+        public string PicExtension { get; set; }
 
         //A movie can belong to multiple genres
         public ICollection<Genre> Genres { get; set; }
@@ -36,5 +42,10 @@ namespace UpcomingMoviesApplication.Models
 
         //Movie Duration in minutes
         public int MovieDuration { get; set; }
+
+        //data needed for keeping track of movie images uploaded
+        //images deposited into /Content/Images/Movies/{id}.{extension}
+        public bool MovieHasPic { get; set; }
+        public string PicExtension { get; set; }
     }
 }

@@ -1,14 +1,17 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using UpcomingMoviesApplication.Models;
+using System.Diagnostics;
 
 namespace UpcomingMoviesApplication.Controllers
 {
@@ -29,7 +32,9 @@ namespace UpcomingMoviesApplication.Controllers
                 MovieTitle = a.MovieTitle,
                 MovieDescription = a.MovieDescription,
                 MovieReleaseDate = a.MovieReleaseDate,
-                MovieDuration = a.MovieDuration
+                MovieDuration = a.MovieDuration,
+                MovieHasPic = a.MovieHasPic,
+                PicExtension = a.PicExtension
             }));
 
             return MovieDtos;
@@ -83,6 +88,7 @@ namespace UpcomingMoviesApplication.Controllers
         /// </example>
         [HttpPost]
         [Route("api/MovieData/AssociateMovieWithActor/{movieid}/{actorid}")]
+        [Authorize]
         public IHttpActionResult AssociateMovieWithActor(int movieid, int actorid)
         {
             Movie SelectedMovie = db.Movies.Include(a => a.Actors).Where(a => a.MovieID == movieid).FirstOrDefault();
@@ -114,6 +120,7 @@ namespace UpcomingMoviesApplication.Controllers
         /// </example>
         [HttpPost]
         [Route("api/MovieData/UnAssociateMovieWithActor/{movieid}/{actorid}")]
+        [Authorize]
         public IHttpActionResult UnAssociateMovieWithActor(int movieid, int actorid)
         {
             Movie SelectedMovie = db.Movies.Include(a => a.Actors).Where(a => a.MovieID == movieid).FirstOrDefault();
@@ -178,6 +185,7 @@ namespace UpcomingMoviesApplication.Controllers
         /// </example>
         [HttpPost]
         [Route("api/MovieData/AssociateMovieWithGenre/{movieid}/{genreid}")]
+        [Authorize]
         public IHttpActionResult AssociateMovieWithGenre(int movieid, int genreid)
         {
             Movie SelectedMovie = db.Movies.Include(a => a.Genres).Where(a => a.MovieID == movieid).FirstOrDefault();
@@ -209,6 +217,7 @@ namespace UpcomingMoviesApplication.Controllers
         /// </example>
         [HttpPost]
         [Route("api/MovieData/UnAssociateMovieWithGenre/{movieid}/{genreid}")]
+        [Authorize]
         public IHttpActionResult UnAssociateMovieWithGenre(int movieid, int genreid)
         {
             Movie SelectedMovie = db.Movies.Include(a => a.Genres).Where(a => a.MovieID == movieid).FirstOrDefault();
@@ -238,7 +247,9 @@ namespace UpcomingMoviesApplication.Controllers
                 MovieTitle = movie.MovieTitle,
                 MovieDescription = movie.MovieDescription,
                 MovieReleaseDate = movie.MovieReleaseDate,
-                MovieDuration = movie.MovieDuration
+                MovieDuration = movie.MovieDuration,
+                MovieHasPic = movie.MovieHasPic,
+                PicExtension = movie.PicExtension
             };
 
             if (movie == null)
@@ -252,6 +263,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/MovieData/UpdateMovie/5
         [ResponseType(typeof(void))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult UpdateMovie(int id, Movie movie)
         {
             if (!ModelState.IsValid)
@@ -265,6 +277,10 @@ namespace UpcomingMoviesApplication.Controllers
             }
 
             db.Entry(movie).State = EntityState.Modified;
+
+            // Picture update is handled by another method
+            db.Entry(movie).Property(a => a.MovieHasPic).IsModified = false;
+            db.Entry(movie).Property(a => a.PicExtension).IsModified = false;
 
             try
             {
@@ -285,9 +301,95 @@ namespace UpcomingMoviesApplication.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+
+        /// <summary>
+        /// Receives movie picture data, uploads it to the webserver and updates the movie's HasPic option
+        /// </summary>
+        /// <param name="id">the movie id</param>
+        /// <returns>status code 200 if successful.</returns>
+        /// <example>
+        /// curl -F moviepic=@file.jpg "https://localhost:xx/api/moviedata/uploadmoviepic/2"
+        /// POST: api/movieData/UploadMoviePic/3
+        /// HEADER: enctype=multipart/form-data
+        /// FORM-DATA: image
+        /// </example>
+        /// https://stackoverflow.com/questions/28369529/how-to-set-up-a-web-api-controller-for-multipart-form-data
+
+        [HttpPost]
+        public IHttpActionResult UploadMoviePic(int id)
+        {
+
+            bool haspic = false;
+            string picextension;
+            if (Request.Content.IsMimeMultipartContent())
+            {
+                Debug.WriteLine("Received multipart form data.");
+
+                int numfiles = HttpContext.Current.Request.Files.Count;
+                Debug.WriteLine("Files Received: " + numfiles);
+
+                //Check if a file is posted
+                if (numfiles == 1 && HttpContext.Current.Request.Files[0] != null)
+                {
+                    var MoviePic = HttpContext.Current.Request.Files[0];
+                    //Check if the file is empty
+                    if (MoviePic.ContentLength > 0)
+                    {
+                        //establish valid file types (can be changed to other file extensions if desired!)
+                        var valtypes = new[] { "jpeg", "jpg", "png", "gif" };
+                        var extension = Path.GetExtension(MoviePic.FileName).Substring(1);
+                        //Check the extension of the file
+                        if (valtypes.Contains(extension))
+                        {
+                            try
+                            {
+                                //file name is the id of the image
+                                string fn = id + "." + extension;
+
+                                //get a direct file path to ~/Content/Images/Movies/{id}.{extension}
+                                string path = Path.Combine(HttpContext.Current.Server.MapPath("~/Content/Images/Movies/"), fn);
+
+                                //save the file
+                                MoviePic.SaveAs(path);
+
+                                //if these are all successful then we can set these fields
+                                haspic = true;
+                                picextension = extension;
+
+                                //Update the animal haspic and picextension fields in the database
+                                Movie Selectedmovie = db.Movies.Find(id);
+                                Selectedmovie.MovieHasPic = haspic;
+                                Selectedmovie.PicExtension = extension;
+                                db.Entry(Selectedmovie).State = EntityState.Modified;
+
+                                db.SaveChanges();
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("movie Image was not saved successfully.");
+                                Debug.WriteLine("Exception:" + ex);
+                                return BadRequest();
+                            }
+                        }
+                    }
+
+                }
+
+                return Ok();
+            }
+            else
+            {
+                //not multipart form data
+                return BadRequest();
+
+            }
+        }
+
         // POST: api/MovieData/AddMovie
         [ResponseType(typeof(Movie))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult AddMovie(Movie movie)
         {
             if (!ModelState.IsValid)
@@ -304,6 +406,7 @@ namespace UpcomingMoviesApplication.Controllers
         // POST: api/MovieData/DeleteMovie/5
         [ResponseType(typeof(Movie))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult DeleteMovie(int id)
         {
             Movie movie = db.Movies.Find(id);
@@ -312,12 +415,24 @@ namespace UpcomingMoviesApplication.Controllers
                 return NotFound();
             }
 
+            if (movie.MovieHasPic && movie.PicExtension != "")
+            {
+                //also delete image from path
+                string path = HttpContext.Current.Server.MapPath("~/Content/Images/Movies/" + id + "." + movie.PicExtension);
+                if (System.IO.File.Exists(path))
+                {
+                    Debug.WriteLine("File exists... preparing to delete!");
+                    System.IO.File.Delete(path);
+                }
+            }
+
             db.Movies.Remove(movie);
             db.SaveChanges();
 
             return Ok();
         }
 
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

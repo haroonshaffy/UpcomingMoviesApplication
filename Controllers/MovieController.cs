@@ -18,8 +18,43 @@ namespace UpcomingMoviesApplication.Controllers
 
         static MovieController()
         {
-            client = new HttpClient();
+            HttpClientHandler handler = new HttpClientHandler()
+            {
+                AllowAutoRedirect = false,
+                //cookies are manually set in RequestHeader
+                UseCookies = false
+            };
+
+            client = new HttpClient(handler);
             client.BaseAddress = new Uri("https://localhost:44343/api/");
+        }
+
+
+        /// <summary>
+        /// Grabs the authentication cookie sent to this controller.
+        /// For proper WebAPI authentication, you can send a post request with login credentials to the WebAPI and log the access token from the response. The controller already knows this token, so we're just passing it up the chain.
+        /// 
+        /// Here is a descriptive article which walks through the process of setting up authorization/authentication directly.
+        /// https://docs.microsoft.com/en-us/aspnet/web-api/overview/security/individual-accounts-in-web-api
+        /// </summary>
+        private void GetApplicationCookie()
+        {
+            string token = "";
+            //HTTP client is set up to be reused, otherwise it will exhaust server resources.
+            //This is a bit dangerous because a previously authenticated cookie could be cached for
+            //a follow-up request from someone else. Reset cookies in HTTP client before grabbing a new one.
+            client.DefaultRequestHeaders.Remove("Cookie");
+            if (!User.Identity.IsAuthenticated) return;
+
+            HttpCookie cookie = System.Web.HttpContext.Current.Request.Cookies.Get(".AspNet.ApplicationCookie");
+            if (cookie != null) token = cookie.Value;
+
+            //collect token as it is submitted to the controller
+            //use it to pass along to the WebAPI.
+            Debug.WriteLine("Token Submitted is : " + token);
+            if (token != "") client.DefaultRequestHeaders.Add("Cookie", ".AspNet.ApplicationCookie=" + token);
+
+            return;
         }
 
         // GET: Movie/List
@@ -49,6 +84,7 @@ namespace UpcomingMoviesApplication.Controllers
 
             MovieDto SelectedMovie = response.Content.ReadAsAsync<MovieDto>().Result;
 
+            Debug.WriteLine(SelectedMovie.MovieHasPic);
             ViewModel.SelectedMovie = SelectedMovie;
 
             //Show associated actors starring in this movie
@@ -85,8 +121,12 @@ namespace UpcomingMoviesApplication.Controllers
 
         //POST: Movie/Associate/{movieid}
         [HttpPost]
+        [Authorize]
         public ActionResult Associate(int id, int ActorID)
         {
+            // Gets the asp.net application cookie to authenticate on the webapi level
+            GetApplicationCookie();
+
             //Call our API to associate Movie with Actor
             string url = "moviedata/associatemoviewithactor/" + id + "/" + ActorID;
             HttpContent content = new StringContent("");
@@ -99,8 +139,12 @@ namespace UpcomingMoviesApplication.Controllers
 
         //GET: Movie/UnAssociate/{id}?ActorID={actorid}
         [HttpGet]
+        [Authorize]
         public ActionResult UnAssociate(int id, int ActorID)
         {
+            // Gets the asp.net application cookie to authenticate on the webapi level
+            GetApplicationCookie();
+
             //Call our API to associate Movie with Actor
             string url = "moviedata/unassociatemoviewithactor/" + id + "/" + ActorID;
             HttpContent content = new StringContent("");
@@ -112,8 +156,12 @@ namespace UpcomingMoviesApplication.Controllers
 
         //POST: Movie/AssociateGenre/{movieid}
         [HttpPost]
+        [Authorize]
         public ActionResult AssociateGenre(int id, int GenreID)
         {
+            // Gets the asp.net application cookie to authenticate on the webapi level
+            GetApplicationCookie();
+
             //Call our API to associate Movie with Genre
             string url = "moviedata/associatemoviewithgenre/" + id + "/" + GenreID;
             HttpContent content = new StringContent("");
@@ -125,8 +173,12 @@ namespace UpcomingMoviesApplication.Controllers
 
         //GET: Movie/UnAssociateGenre/{id}?GenreID={genreid}
         [HttpGet]
+        [Authorize]
         public ActionResult UnAssociateGenre(int id, int GenreID)
         {
+            // Gets the asp.net application cookie to authenticate on the webapi level
+            GetApplicationCookie();
+
             //Call our API to associate Movie with Actor
             string url = "moviedata/unassociatemoviewithgenre/" + id + "/" + GenreID;
             HttpContent content = new StringContent("");
@@ -143,24 +195,20 @@ namespace UpcomingMoviesApplication.Controllers
         }
 
         // GET: Movie/New
+        [Authorize]
         public ActionResult New()
         {
-            /*
-            //Information about all genres in the system
-            //GET api/genredata/listgenre
-
-            string url = "genredata/listgenre";
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            IEnumerable<Genre> GenreList = response.Content.ReadAsAsync<IEnumerable<Genre>>().Result;
-
-            return View(GenreList);*/
             return View();
         }
 
         // POST: Movie/Create
         [HttpPost]
+        [Authorize]
         public ActionResult Create(Movie movie)
         {
+            // Gets the asp.net application cookie to authenticate on the webapi level
+            GetApplicationCookie();
+
             //Objective : Add a new movie into our system using the API
             //curl -H "Content-type:application/json" -d @movie.json https://localhost:44343/api/moviedata/addmovie
 
@@ -184,6 +232,7 @@ namespace UpcomingMoviesApplication.Controllers
         }
 
         // GET: Movie/Update/5
+        [Authorize]
         public ActionResult Update(int id)
         {
             //Find the movie to show to the user to understand what is being edited
@@ -199,8 +248,12 @@ namespace UpcomingMoviesApplication.Controllers
 
         // POST: Movie/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, Movie movie)
+        [Authorize]
+        public ActionResult Edit(int id, Movie movie, HttpPostedFileBase MoviePic)
         {
+            // Gets the asp.net application cookie to authenticate on the webapi level
+            GetApplicationCookie();
+
             //Objective : Add a new movie into our system using the API
             //curl -H "Content-type:application/json" -d @movie.json https://localhost:44343/api/moviedata/addmovie
             string url = "moviedata/updatemovie/" + id;
@@ -212,8 +265,27 @@ namespace UpcomingMoviesApplication.Controllers
 
             HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-            if (response.IsSuccessStatusCode)
+            //update request is successful, and we have image data
+            if (response.IsSuccessStatusCode && MoviePic != null)
             {
+                //Updating the movie picture as a separate request
+                Debug.WriteLine("Calling Update Image method.");
+                //Send over image data for player
+                url = "MovieData/UploadMoviePic/" + id;
+                //Debug.WriteLine("Received Movie Picture "+MoviePicPic.FileName);
+
+                MultipartFormDataContent requestcontent = new MultipartFormDataContent();
+                HttpContent imagecontent = new StreamContent(MoviePic.InputStream);
+                requestcontent.Add(imagecontent, "MoviePic", MoviePic.FileName);
+                response = client.PostAsync(url, requestcontent).Result;
+
+                return RedirectToAction("List");
+            }
+
+            else if (response.IsSuccessStatusCode)
+            {
+                //No image upload but update still successful
+
                 return RedirectToAction("List");
             }
             else
@@ -223,6 +295,7 @@ namespace UpcomingMoviesApplication.Controllers
         }
 
         // GET: Movie/Delete/5
+        [Authorize]
         public ActionResult Delete(int id)
         {
             string url = "moviedata/findmovie/" + id;
@@ -236,8 +309,12 @@ namespace UpcomingMoviesApplication.Controllers
 
         // POST: Movie/Delete/5
         [HttpPost]
+        [Authorize]
         public ActionResult Delete(int id, Movie movie)
         {
+            // Gets the asp.net application cookie to authenticate on the webapi level
+            GetApplicationCookie();
+
             string url = "moviedata/deletemovie/" + id;
 
             string jsonpayload = jss.Serialize(movie);
