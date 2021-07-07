@@ -5,9 +5,11 @@
     ViewBag.Title = "Details";
 }
 
-<a href="/Actor/List">Go back to List</a>
-<a href="/Actor/Update/@Model.SelectedActor.ActorID">Update</a>
-<a href="/Actor/Delete/@Model.SelectedActor.ActorID">Delete</a>
+<div style="margin-top:50px;">
+    <a href="/Actor/List">Go back to List</a>
+    <a href="/Actor/Update/@Model.SelectedActor.ActorID">Update</a>
+    <a href="/Actor/Delete/@Model.SelectedActor.ActorID">Delete</a>
+</div>
 
 
 <h2>@Model.SelectedActor.ActorName</h2>

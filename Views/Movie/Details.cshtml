@@ -4,10 +4,11 @@
 @{
     ViewBag.Title = "Show";
 }
-
-<a href="/Movie/List">Go back to List</a>
-<a href="/Movie/Update/@Model.SelectedMovie.MovieID">Update</a>
-<a href="/Movie/Delete/@Model.SelectedMovie.MovieID">Delete</a>
+<div style="margin-top:50px;">
+    <a href="/Movie/List">Go back to List</a>
+    <a href="/Movie/Update/@Model.SelectedMovie.MovieID">Update</a>
+    <a href="/Movie/Delete/@Model.SelectedMovie.MovieID">Delete</a>
+</div>
 
 
 <h2>@Model.SelectedMovie.MovieTitle</h2>
@@ -20,7 +21,7 @@
             imageurl = "/Content/Images/Movies/" + Model.SelectedMovie.MovieID + "." + Model.SelectedMovie.PicExtension;
         }
     }
-    <div><img style="display:block; max-width:100%;" alt="@Model.SelectedMovie.MovieTitle" src="@imageurl" /></div>
+    <div><img style="display:block; max-width:400px; max-height:500px;" alt="@Model.SelectedMovie.MovieTitle" src="@imageurl" /></div>
 </div>
 
 <div class="col-md-6 col-sm-12">

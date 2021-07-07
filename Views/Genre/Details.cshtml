@@ -4,9 +4,11 @@
     ViewBag.Title = "Details";
 }
 
-<a href="/Genre/List">Go back to the List</a>
-<a href="/Genre/Update/@Model.SelectedGenre.GenreID">Update</a>
-<a href="/Genre/Delete/@Model.SelectedGenre.GenreID">Delete</a>
+<div style="margin-top:50px;">
+    <a href="/Genre/List">Go back to the List</a>
+    <a href="/Genre/Update/@Model.SelectedGenre.GenreID">Update</a>
+    <a href="/Genre/Delete/@Model.SelectedGenre.GenreID">Delete</a>
+</div>
 
 
 <h2>@Model.SelectedGenre.GenreName</h2>
