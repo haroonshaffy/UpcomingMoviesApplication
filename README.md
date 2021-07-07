@@ -4,7 +4,7 @@
 PopScreen is an application that I created to keep a track of upcoming hollywood movies
 
 ## [Youtube link](https://youtu.be/V98d4RGji5A)
-## [GitHub](http://github.com)
+## [GitHub](https://github.com/haroonshaffy/UpcomingMoviesApplication)
 
 ## Entities
 Movies - Details of all the upcoming hollywood movies. This entity is in a M-M relationship with both Actors and Genres
