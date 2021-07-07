@@ -7,9 +7,9 @@ PopScreen is an application that I created to keep a track of upcoming hollywood
 ## [GitHub](https://github.com/haroonshaffy/UpcomingMoviesApplication)
 
 ## Entities
-Movies - Details of all the upcoming hollywood movies. This entity is in a M-M relationship with both Actors and Genres
-Actors - Lists all the actors. The Actors entitiy is in a M-M relationship with the movies entity
-Genres - Information about all the genres. The genres entity is also in a M-M relationship with the movies entity
+1. Movies - Details of all the upcoming hollywood movies. This entity is in a M-M relationship with both Actors and Genres
+1. Actors - Lists all the actors. The Actors entitiy is in a M-M relationship with the movies entity
+1. Genres - Information about all the genres. The genres entity is also in a M-M relationship with the movies entity
 
 ## Tasks
 - [x] Create 3 tables to manage data (Using migrations)
