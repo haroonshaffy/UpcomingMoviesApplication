@@ -21,12 +21,12 @@ PopScreen is an application that I created to keep a track of upcoming hollywood
 - [x] Authentication feature
 - [x] Responsive design
  
-## Future Enchacements
-- [x] A countdown timer to keep a track of how many days are left for the release date
-- [x] To remove a movie from the list as soon as the release date has lapsed
-- [x] Improve the Design of the website.
-- [x] Create different view for an external user and an administrator
-- [x] Add an option to include the movie trailer
+## Future Enhancements
+- [] A countdown timer to keep a track of how many days are left for the release date
+- [] To remove a movie from the list as soon as the release date has lapsed
+- [] Improve the Design of the website.
+- [] Create different view for an external user and an administrator
+- [] Add an option to include the movie trailer
 
 ## Learning Curve 
 * Implementing the M-M relationship
